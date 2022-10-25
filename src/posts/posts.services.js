@@ -1,10 +1,26 @@
 const postControllers = require("./posts.controllers");
+const { host } = require("../config");
 
 const getAllPosts = (req, res) => {
+  const offset = Number(req.query.offset) || 0;
+  const limit = Number(req.query.limit) || 10;
+
+  const urlBase = `${host}/api/v1/posts`;
+
   postControllers
-    .getAllPosts()
+    .getAllPosts(offset, limit)
     .then((data) => {
-      res.status(200).json(data);
+      res.status(200).json({
+        urlBase,
+        next: `${urlBase}?offset=${offset + limit}&limit=${limit}`,
+        previus:
+          offset === 0
+            ? null
+            : `${urlBase}?offset=${offset - limit}&limit=${limit}`,
+        offset,
+        limit,
+        results: data,
+      });
     })
     .catch((err) => {
       res.status(400).json({ message: err.message });
