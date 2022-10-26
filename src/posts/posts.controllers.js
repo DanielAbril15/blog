@@ -5,7 +5,7 @@ const Categories = require("../models/category.models");
 const Users = require("../models/users.models");
 
 const getAllPosts = async (offset, limit) => {
-  const data = await Posts.findAll({
+  const data = await Posts.findAndCountAll({
     offset: offset,
     limit: limit,
     attributes: {

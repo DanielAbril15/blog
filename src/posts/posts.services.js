@@ -12,14 +12,18 @@ const getAllPosts = (req, res) => {
     .then((data) => {
       res.status(200).json({
         urlBase,
-        next: `${urlBase}?offset=${offset + limit}&limit=${limit}`,
-        previus:
-          offset === 0
+        nextPage:
+          offset + limit > data.count
             ? null
-            : `${urlBase}?offset=${offset - limit}&limit=${limit}`,
+            : `${urlBase}?offset=${offset + limit}&limit=${limit}`,
+        previusPage:
+          offset - limit >= 0
+            ? `${urlBase}?offset=${offset - limit}&limit=${limit}`
+            : null,
+        items: data.count,
         offset,
         limit,
-        results: data,
+        results: data.rows,
       });
     })
     .catch((err) => {
